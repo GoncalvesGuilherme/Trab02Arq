@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "tweet.h"
 
 // Remove o \n do final da string
@@ -21,24 +22,46 @@ void chomp(char str[]) {
 	return;
 }
 
+char *allocatesStr(int strLen) {
+	char *s;
+
+	s = (char *) malloc (strLen * sizeof(char));
+
+	return s;	
+}
+
 int getTweet(void) {
 	TWEET t;
 	int opt = 1;
-	int freeByteOffset;
+	char str[100], *s;
+	//int freeByteOffset;
 
-	fgetc(stdin);
-	while(opt != 0){
+	//fgetc(stdin);
+//	while(opt != 0){
 		// Le todas as variaveis do registro
-		system("clear");
-		freeByteOffset = searchFreeByteOffset();
+		//system("clear");
+		//freeByteOffset = searchFreeByteOffset();
 		printf("Digite o texto: ");
-		fgets(t.TEXT, 100, stdin);
-		chomp(t.TEXT);
-		fflush(stdin);
+		fgets(str, 100, stdin);
+		chomp(str);
+		s = allocatesStr(strlen(str));
+		strcpy(s, str);
+		t.TEXT = s;
+		puts(t.TEXT);
+
+		memset(str, 0, 100);
+		s = NULL;
 		printf("Digite o nome de usuario: ");
-		fgets(t.USER, USER_SIZE, stdin);
-		chomp(t.USER);
-		fflush(stdin);
+		fgets(str, 100, stdin);
+		chomp(str);
+		s = allocatesStr(strlen(str));
+		strcpy(s, str);
+		t.TEXT = s;
+		puts(t.USER);
+
+		memset(str, 0, 100);
+		s = NULL;
+
 		printf("Digite as coordenadas: ");
 		fgets(t.COORDINATES, COOR_SIZE, stdin);
 		chomp(t.COORDINATES);
@@ -53,15 +76,24 @@ int getTweet(void) {
 		scanf("%d", &t.RETWEET_COUNT);
 		printf("Digite o numero de visualizacoes: ");
 		scanf("%ld", &t.VIEWS_COUNT);
-		// Se tiver espaço livre, insere nele
-		if(RRNlivre != -1)
-			adicionarmeio(t, RRNlivre);
-		// Senao, insere no final do arquivo
-		else
-			adicionarfim(t);
+
+		if (addTweet(fp, t) != 0) {
+			printf("Insercao nao realizada, tente de novo mais tarde:/\n");
+		}
+		else {
+			printf("Insercao realizada com sucesso!\n");
+		}
+
 		printf("Deseja adicionar mais pessoas? \nDigite qualquer numero para sim e 0 para retornar ao menu principal\n");
-		scanf("%d", &opc);
-		getchar();
-	}
+		scanf("%d", &opt);
+		getchar();*/
+//	}
+	return 0;
+}
+
+int main (void) {
+
+	getTweet();
+
 	return 0;
 }
