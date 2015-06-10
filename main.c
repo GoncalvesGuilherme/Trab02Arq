@@ -29,6 +29,9 @@ int main (void) {
 	//printf("sp1 %d\n", sp1);
 
 	getTweet(fp);
+	//write(fp);
+
+	readAllTweets(fp);
 
 	fclose(fp);
 
@@ -73,7 +76,7 @@ int getTweet(FILE *fp) {
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.TEXT = s;
-		puts(t.TEXT);
+		//puts(t.TEXT);
 
 		memset(str, 0, 100);
 		s = NULL;
@@ -83,7 +86,7 @@ int getTweet(FILE *fp) {
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.USER = s;
-		puts(t.USER);
+		//puts(t.USER);
 
 		memset(str, 0, 100);
 		s = NULL;
@@ -93,7 +96,7 @@ int getTweet(FILE *fp) {
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.COORDINATES = s;
-		puts(t.COORDINATES);
+		//puts(t.COORDINATES);
 
 		printf("Digite o idioma: ");
 		fgets(str, 100, stdin);
@@ -101,19 +104,19 @@ int getTweet(FILE *fp) {
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.LANGUAGE = s;
-		puts(t.LANGUAGE);
+		//puts(t.LANGUAGE);
 
 		printf("Digite o numero de marcacoes como favorito: ");
 		scanf("%d", &t.FAVORITE_COUNT);
-		printf("fc %d\n", t.FAVORITE_COUNT);
+		//printf("fc %d\n", t.FAVORITE_COUNT);
 
 		printf("Digite o numero de retweets: ");
 		scanf("%d", &t.RETWEET_COUNT);
-		printf("rc %d\n", t.RETWEET_COUNT);
+		//printf("rc %d\n", t.RETWEET_COUNT);
 
 		printf("Digite o numero de visualizacoes: ");
 		scanf("%ld", &t.VIEWS_COUNT);
-		printf("vc %ld\n", t.VIEWS_COUNT);
+		//printf("vc %ld\n", t.VIEWS_COUNT);
 
 		if (addTweet(fp, &t) != 0) {
 			printf("Insercao nao realizada, tente de novo mais tarde:/\n");

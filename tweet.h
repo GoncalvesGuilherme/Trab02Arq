@@ -19,6 +19,8 @@ typedef struct tweet_list {
 	struct tweet_list* nextNode;
 } TweetList;
 
+void write(FILE *fd);
+
 /**
  * @brief Insere registros no arquivo a partir
  * da leitura dos dados
