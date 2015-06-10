@@ -15,7 +15,7 @@ int calculatesTweetSize(TWEET *t) {
 
 	size = 2 * sizeof(int) + sizeof(long); // size somente dos int e do long, sem as strings
 
-	size = strlen(t->TEXT) * sizeof(char) + strlen(t->USER) * sizeof(char) + 
+	size += strlen(t->TEXT) * sizeof(char) + strlen(t->USER) * sizeof(char) + 
 		strlen(t->COORDINATES) * sizeof(char) + strlen(t->LANGUAGE) * sizeof(char);
 	printf("size %d\n", size);
 	return size;
@@ -23,23 +23,47 @@ int calculatesTweetSize(TWEET *t) {
 
 int addEnd(FILE *fp, TWEET *t, int totalSize) {
 	char delimiter = '|';
+	char text[strlen(t->TEXT)];
+	char user[strlen(t->USER)];
+	char coordinates[strlen(t->COORDINATES)];
+	char language[strlen(t->LANGUAGE)];
+	int favorite, retweet;
+	long views;
+	
+	
+	strcpy(text, t->TEXT);
+	strcpy(user, t->USER);
+	strcpy(coordinates, t->COORDINATES);
+	strcpy(language, t->LANGUAGE);
+	favorite = t->FAVORITE_COUNT;
+	retweet = t->RETWEET_COUNT;
+	views = t->VIEWS_COUNT;
 
 	//rewind(fp);
 	fseek(fp, 0, SEEK_END);
-
+/*
+	printf("%d\n", totalSize);
+	printf("text %s\n", t->TEXT);
+	printf("u %s\n", t->USER);
+	printf("c %s\n", t->COORDINATES);
+	printf("l %s\n", t->LANGUAGE);
+	printf("f %d\n", t->FAVORITE_COUNT);
+	printf("text %d\n", t->RETWEET_COUNT);
+	printf("views %ld\n", t->VIEWS_COUNT);
+	printf("%d", strlen(t->USER));
+*/
 	fwrite(&totalSize, sizeof(int), 1, fp);
-//printf("text %s\n", t->TEXT);
-	fwrite(&t->TEXT, sizeof(char),strlen(t->TEXT), fp);
+	fwrite(text, strlen(text), 1, fp);
 	fwrite(&delimiter, sizeof(char), 1, fp);
-	fwrite(&t->USER, sizeof(char), strlen(t->USER), fp);
+	fwrite(user, strlen(user), 1, fp);
 	fwrite(&delimiter, sizeof(char), 1, fp);
-	fwrite(&t->COORDINATES, sizeof(char), strlen(t->COORDINATES), fp);
+	fwrite(coordinates, strlen(coordinates), 1, fp);
 	fwrite(&delimiter, sizeof(char), 1, fp);
-	fwrite(&t->LANGUAGE, sizeof(char), strlen(t->LANGUAGE), fp);
+	fwrite(language, strlen(language), 1, fp);
 	fwrite(&delimiter, sizeof(char), 1, fp);
-	fwrite(&t->FAVORITE_COUNT, sizeof(t->FAVORITE_COUNT), 1,fp);
-	fwrite(&t->RETWEET_COUNT, sizeof(t->RETWEET_COUNT), 1, fp);
-	fwrite(&t->VIEWS_COUNT, sizeof(t->VIEWS_COUNT), 1, fp);
+	fwrite(&favorite, sizeof(int), 1,fp);
+	fwrite(&retweet, sizeof(int), 1, fp);
+	fwrite(&views, sizeof(long), 1, fp);
 
 	return 0;
 }
@@ -73,47 +97,6 @@ char* alloc_str(int size) {
     str = (char *) malloc(size * sizeof(char));
 
     return str;
-}
-
-void write(FILE *fd) {
-    int x = 10;
-    char str[] = "Arnaldo#";
-    char str2[] = "Isso eh um teste#";
-    char str3[] = "3N24L#";
-    char str4[] = "Portugues#";
-    int y = 4;
-    int z = 8;
-    long a = 100;
-
-    rewind(fd);
-	//fseek(fd, sizeof(int), SEEK_SET);
-
-    fwrite(&x, sizeof(int), 1, fd);
-    fwrite(str, sizeof(char), strlen(str), fd);
-    fwrite(str2, sizeof(char), strlen(str2), fd);
-    fwrite(str3, sizeof(char), strlen(str3), fd);
-    fwrite(str4, sizeof(char), strlen(str4), fd);
-    fwrite(&y, sizeof(int), 1, fd);
-    fwrite(&z, sizeof(int), 1, fd);
-    fwrite(&a, sizeof(long), 1, fd);
-
-    strcpy(str, "Jose#");
-    strcpy(str2, "Teste profundo#");
-    strcpy(str3, "24N24W#");
-    strcpy(str4, "Ingles#");
-    x = 20;
-    y = 14;
-    z = 18;
-    a = 200;
-
-    fwrite(&x, sizeof(int), 1, fd);
-    fwrite(str, sizeof(char), strlen(str), fd);
-    fwrite(str2, sizeof(char), strlen(str2), fd);
-    fwrite(str3, sizeof(char), strlen(str3), fd);
-    fwrite(str4, sizeof(char), strlen(str4), fd);
-    fwrite(&y, sizeof(int), 1, fd);
-    fwrite(&z, sizeof(int), 1, fd);
-    fwrite(&a, sizeof(long), 1, fd);
 }
 
 int readAllTweets(FILE* fd) {
