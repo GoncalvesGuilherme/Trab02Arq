@@ -25,13 +25,15 @@ void printTweet(TWEET t) {
 
 int readAllTweets(FILE* fd) {
 
-    int length, i = 0;
+    int length, i = 0, j;
     char str_aux[141];
     TWEET t;
 
     rewind(fd);
 
     while(1) {
+        //fread(&j, sizeof(int), 1, fd);
+        fseek(fd, sizeof(int), SEEK_CUR);
         fread(&length, sizeof(int), 1, fd); // Ve o tamanho do proximo registro
         if(feof(fd))
             break;
@@ -85,13 +87,15 @@ int readAllTweets(FILE* fd) {
 
 int getTweetByUser(FILE* fd, char* user) {
 
-    int length, i = 0;
+    int length, i = 0, j;
     char str_aux[100];
     TWEET t;
 
     rewind(fd);
 
     while(1) {
+        //fread(&j, sizeof(int), 1, fd);
+        fseek(fd, sizeof(int), SEEK_CUR);
         fread(&length, sizeof(int), 1, fd);
         if(feof(fd))
             break;
@@ -150,6 +154,7 @@ int getTweetByUser(FILE* fd, char* user) {
 
 void write(FILE *fd) {
     int x = 61;
+    int j = 4;
     char str[] = "Arnaldo#";
     char str2[] = "Isso eh um teste#";
     char str3[] = "3N24L#";
@@ -160,6 +165,7 @@ void write(FILE *fd) {
 
     rewind(fd);
 
+    fwrite(&j, sizeof(int), 1, fd);
     fwrite(&x, sizeof(int), 1, fd);
     fwrite(str, sizeof(char), strlen(str), fd);
     fwrite(str2, sizeof(char), strlen(str2), fd);
@@ -178,6 +184,7 @@ void write(FILE *fd) {
     z = 18;
     a = 200;
 
+    fwrite(&j, sizeof(int), 1, fd);
     fwrite(&x, sizeof(int), 1, fd);
     fwrite(str, sizeof(char), strlen(str), fd);
     fwrite(str2, sizeof(char), strlen(str2), fd);
@@ -196,6 +203,7 @@ void write(FILE *fd) {
     z = 57;
     a = 2840;
 
+    fwrite(&j, sizeof(int), 1, fd);
     fwrite(&x, sizeof(int), 1, fd);
     fwrite(str, sizeof(char), strlen(str), fd);
     fwrite(str2, sizeof(char), strlen(str2), fd);
