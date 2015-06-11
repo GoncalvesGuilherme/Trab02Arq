@@ -39,7 +39,6 @@ int main (void) {
 	//fread(&sp1, sizeof(int), 1, fp);
 	//printf("sp1 %d\n", sp1);
 
-	printf("main31 tr: %d\n", totalRegs);
 	getTweet(fp, &totalRegs);
 	//write(fp);
 
@@ -74,8 +73,6 @@ int getTweet(FILE *fp, int *totalRegs) {
 	int opt = 1;
 	char str[100], *s;
 	int freeByteOffset;
-
-	printf("main67 tr: %d\n", *totalRegs);
 
 	//fgetc(stdin);
 	//fgets(str, 100, stdin);		// ignora a primeira chamada por pegar lixo, estranho nao deu problema no inicio, tirei essa e works
@@ -142,7 +139,6 @@ int getTweet(FILE *fp, int *totalRegs) {
 		printf("Deseja adicionar mais pessoas? \nDigite qualquer numero para sim e 0 para retornar ao menu principal\n");
 		scanf("%d", &opt);
 		//getchar();
-
 		fgets(str, 100, stdin);		// ignora o lixo da strin
 	}
 	return 0;

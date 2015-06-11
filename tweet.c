@@ -17,7 +17,7 @@ int calculatesTweetSize(TWEET *t) {
 
 	size += strlen(t->TEXT) * sizeof(char) + strlen(t->USER) * sizeof(char) + 
 		strlen(t->COORDINATES) * sizeof(char) + strlen(t->LANGUAGE) * sizeof(char);
-	printf("size %d\n", size);
+	//printf("size %d\n", size);
 	return size;
 }
 
@@ -57,9 +57,8 @@ int addEnd(FILE *fp, TWEET *t, int totalSize, int *totalRegs) {
 	fwrite(&favorite, sizeof(int), 1,fp);
 	fwrite(&retweet, sizeof(int), 1, fp);
 	fwrite(&views, sizeof(long), 1, fp);
-	
-	*totalRegs++;
-	printf(".c72 totalRegs: %d\n", *totalRegs);
+
+	*totalRegs += 1;
 	if (*totalRegs == 10) {
 		createIndex(fp);
 	}
@@ -75,8 +74,7 @@ int addTweet(FILE *fp, TWEET *newTweet, int *totalRegs) {
 	int stackTop, totalSize;
 
 	totalSize = calculatesTweetSize(newTweet);
-	printf("totalSize: %d\n", totalSize);
-
+	//printf("totalSize: %d\n", totalSize);
 	rewind(fp);
 	//fseek(fp, sizeof(int), SEEK_SET);
 	fread(&stackTop, sizeof(int), 1, fp);
