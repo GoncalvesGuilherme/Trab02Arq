@@ -21,7 +21,11 @@ int calculatesTweetSize(TWEET *t) {
 	return size;
 }
 
-int addEnd(FILE *fp, TWEET *t, int totalSize) {
+int createIndex(FILE *fp) {
+	printf("creating index\n");
+}
+
+int addEnd(FILE *fp, TWEET *t, int totalSize, int *totalRegs) {
 	char delimiter = '|';
 	char text[strlen(t->TEXT)];
 	char user[strlen(t->USER)];
@@ -29,7 +33,6 @@ int addEnd(FILE *fp, TWEET *t, int totalSize) {
 	char language[strlen(t->LANGUAGE)];
 	int favorite, retweet;
 	long views;
-	
 	
 	strcpy(text, t->TEXT);
 	strcpy(user, t->USER);
@@ -41,17 +44,7 @@ int addEnd(FILE *fp, TWEET *t, int totalSize) {
 
 	//rewind(fp);
 	fseek(fp, 0, SEEK_END);
-/*
-	printf("%d\n", totalSize);
-	printf("text %s\n", t->TEXT);
-	printf("u %s\n", t->USER);
-	printf("c %s\n", t->COORDINATES);
-	printf("l %s\n", t->LANGUAGE);
-	printf("f %d\n", t->FAVORITE_COUNT);
-	printf("text %d\n", t->RETWEET_COUNT);
-	printf("views %ld\n", t->VIEWS_COUNT);
-	printf("%d", strlen(t->USER));
-*/
+
 	fwrite(&totalSize, sizeof(int), 1, fp);
 	fwrite(text, strlen(text), 1, fp);
 	fwrite(&delimiter, sizeof(char), 1, fp);
@@ -64,15 +57,21 @@ int addEnd(FILE *fp, TWEET *t, int totalSize) {
 	fwrite(&favorite, sizeof(int), 1,fp);
 	fwrite(&retweet, sizeof(int), 1, fp);
 	fwrite(&views, sizeof(long), 1, fp);
+	
+	*totalRegs++;
+	printf(".c72 totalRegs: %d\n", *totalRegs);
+	if (*totalRegs == 10) {
+		createIndex(fp);
+	}
 
 	return 0;
 }
 
-int addMiddle(FILE *fp, TWEET *t, int totalSize) {
+int addMiddle(FILE *fp, TWEET *t, int totalSize, int *totalRegs) {
 
 }
 
-int addTweet(FILE *fp, TWEET *newTweet) {
+int addTweet(FILE *fp, TWEET *newTweet, int *totalRegs) {
 	int stackTop, totalSize;
 
 	totalSize = calculatesTweetSize(newTweet);
@@ -83,15 +82,14 @@ int addTweet(FILE *fp, TWEET *newTweet) {
 	fread(&stackTop, sizeof(int), 1, fp);
 
 	if (stackTop == -1) {
-		return addEnd(fp, newTweet, totalSize);
+		return addEnd(fp, newTweet, totalSize, totalRegs);
 	}
 	else {
-		return addMiddle(fp, newTweet, totalSize);
+		return addMiddle(fp, newTweet, totalSize, totalRegs);
 	}
 }
 
 char* alloc_str(int size) {
-
     char* str;
 
     str = (char *) malloc(size * sizeof(char));
@@ -100,9 +98,8 @@ char* alloc_str(int size) {
 }
 
 int readAllTweets(FILE* fd) {
-
-    int length, i = 0;
-    char str_aux[100];
+    int length, i;
+    char str[100], c;
     TWEET t;
 
     rewind(fd);
@@ -110,45 +107,56 @@ int readAllTweets(FILE* fd) {
 
     while(1) {
         fread(&length, sizeof(int), 1, fd); // Ve o tamanho do proximo registro
-        if(feof(fd))
+        if(feof(fd)) {
             break;
-        while((str_aux[i] = fgetc(fd)) != '#') {
-            i++;
         }
-        str_aux[i] = '\0';
-        t.USER = alloc_str(strlen(str_aux));
-        strcpy(t.USER, str_aux);
-        printf("%s\n", t.USER);
+        
         i = 0;
-        while((str_aux[i] = fgetc(fd)) != '#') {
-            i++;
+        c = fgetc(fd);
+        while (c != '|') {
+        	str[i] = c;
+        	i++;
+        	c = fgetc(fd);
         }
-        str_aux[i] = '\0';
-        t.TEXT = alloc_str(strlen(str_aux));
-        strcpy(t.TEXT, str_aux);
-        printf("%s\n", t.TEXT);
+        str[i] = '\0';
+        t.TEXT = alloc_str(strlen(str));
+        strcpy(t.TEXT, str);
+        printf("text: %s\n", t.TEXT);
+        
         i = 0;
-        while((str_aux[i] = fgetc(fd)) != '#') {
-            i++;
+        c = fgetc(fd);
+        while (c != '|') {
+        	str[i] = c;
+        	i++;
+        	c = fgetc(fd);
         }
-        str_aux[i] = '\0';
-        t.COORDINATES = alloc_str(strlen(str_aux));
-        strcpy(t.COORDINATES, str_aux);
-        printf("%s\n", t.COORDINATES);
+        str[i] = '\0';
+        t.USER = alloc_str(strlen(str));
+        strcpy(t.USER, str);
+        printf("user: %s\n", t.USER);
+        
         i = 0;
-        while((str_aux[i] = fgetc(fd)) != '#') {
+        while((str[i] = fgetc(fd)) != '|') {
             i++;
         }
-        str_aux[i] = '\0';
-        t.LANGUAGE = alloc_str(strlen(str_aux));
-        strcpy(t.LANGUAGE, str_aux);
-        printf("%s\n", t.LANGUAGE);
+        str[i] = '\0';
+        t.COORDINATES = alloc_str(strlen(str));
+        strcpy(t.COORDINATES, str);
+        printf("coordinates: %s\n", t.COORDINATES);
+        i = 0;
+        while((str[i] = fgetc(fd)) != '|') {
+            i++;
+        }
+        str[i] = '\0';
+        t.LANGUAGE = alloc_str(strlen(str));
+        strcpy(t.LANGUAGE, str);
+        printf("language: %s\n", t.LANGUAGE);
         fread(&t.FAVORITE_COUNT, sizeof(int), 1, fd);
-        printf("%d\n", t.FAVORITE_COUNT);
+        printf("favorite:%d\n", t.FAVORITE_COUNT);
         fread(&t.RETWEET_COUNT, sizeof(int), 1, fd);
-        printf("%d\n", t.RETWEET_COUNT);
+        printf("retweet: %d\n", t.RETWEET_COUNT);
         fread(&t.VIEWS_COUNT, sizeof(long), 1, fd);
-        printf("%ld\n", t.VIEWS_COUNT);
+        printf("views: %ld\n", t.VIEWS_COUNT);
     }
     return 0;
 }

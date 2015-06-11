@@ -31,7 +31,7 @@ void write(FILE *fd);
  * @return -1 Se falhou a inserção
  *          1 Se inseriou com sucesso
  */
-int addTweet(FILE* fd, TWEET* tweet);
+int addTweet(FILE* fd, TWEET* tweet, int *totalRegs);
 
 /**
  * @brief Remove tweet a partir do campo FAVORITE_COUNT

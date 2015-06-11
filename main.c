@@ -10,25 +10,37 @@
 #include <string.h>
 #include "tweet.h"
 
+void noFile(FILE *fp) {
+	int sp = -1, pos;
+
+	fseek(fp, 0, SEEK_END);
+	pos = ftell(fp);
+	printf("pos %d\n", pos);
+	if (pos <= 0) {
+		rewind(fp);
+		fwrite(&sp, sizeof(int), 1, fp);
+	}
+}
+
 // Remove o \n do final da string
 void chomp(char str[]);
 
 char *allocatesStr(int strLen);
 
-int getTweet(FILE *fp);
+int getTweet(FILE *fp, int *totalRegs);
 
 int main (void) {
-	int sp = -1, sp1;
+	int totalRegs = 0;
 	FILE *fp;
 
 	fp = fopen("data.bin", "ab+");
-	fwrite(&sp, sizeof(int), 1, fp);
-
+	noFile(fp);
 	//fseek(fp, 0, SEEK_SET);
 	//fread(&sp1, sizeof(int), 1, fp);
 	//printf("sp1 %d\n", sp1);
 
-	getTweet(fp);
+	printf("main31 tr: %d\n", totalRegs);
+	getTweet(fp, &totalRegs);
 	//write(fp);
 
 	readAllTweets(fp);
@@ -57,11 +69,13 @@ char *allocatesStr(int strLen) {
 	return s;	
 }
 
-int getTweet(FILE *fp) {
+int getTweet(FILE *fp, int *totalRegs) {
 	TWEET t;
 	int opt = 1;
 	char str[100], *s;
 	int freeByteOffset;
+
+	printf("main67 tr: %d\n", *totalRegs);
 
 	//fgetc(stdin);
 	//fgets(str, 100, stdin);		// ignora a primeira chamada por pegar lixo, estranho nao deu problema no inicio, tirei essa e works
@@ -118,7 +132,7 @@ int getTweet(FILE *fp) {
 		scanf("%ld", &t.VIEWS_COUNT);
 		//printf("vc %ld\n", t.VIEWS_COUNT);
 
-		if (addTweet(fp, &t) != 0) {
+		if (addTweet(fp, &t, totalRegs) != 0) {
 			printf("Insercao nao realizada, tente de novo mais tarde:/\n");
 		}
 		else {
