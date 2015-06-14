@@ -169,8 +169,110 @@ int calculatesTweetSize(TWEET *t) {
 	return size;
 }
 
-int createIndex(FILE *fp) {
+/***** FUNCAO TESTE DO INDICE *****/
+
+void testIndex(FILE *fd) {
+
+    int favorite, i;
+
+    rewind(fd);
+
+    while(1) {
+        fread(&favorite, sizeof(int), 1, fd);
+        if(feof(fd))
+            break;
+        fread(&i, sizeof(int), 1, fd);
+        printf("%d %d\n", favorite, i);
+    }
+}
+
+/**********************************/
+
+int compare(const void *a, const void *b) {
+    return ( *(int*)a - *(int*)b );
+}
+
+int isInTheVector(sort_index *v, int n, int favorite) {
+    int i;
+
+    for(i = 0; i < n; i++) {
+        if(v[i].FAVORITE_COUNT == favorite) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int createIndex(FILE *fd) {
 	printf("creating index\n");
+
+    FILE *idx;
+    int i = 0, j = 0, length, k, m = 0, offset;
+    char str_aux[100];
+    TWEET t;
+    sort_index *vector = NULL;
+    //vector = NULL;
+    //vector = malloc(0);
+
+    idx = fopen("idx.bin", "wb+");
+
+    rewind(fd);
+
+    while(1) {
+        offset = ftell(fd);
+        fseek(fd, sizeof(int), SEEK_CUR);
+        fread(&length, sizeof(int), 1, fd);
+        if(feof(fd))
+            break;
+        j = 0;
+        while((str_aux[j] = fgetc(fd)) != '|') {
+            j++;
+        }
+        str_aux[j] = '\0';
+        j = 0;
+        while((str_aux[j] = fgetc(fd)) != '|') {
+            j++;
+        }
+        str_aux[j] = '\0';
+        j = 0;
+        while((str_aux[j] = fgetc(fd)) != '|') {
+            j++;
+        }
+        str_aux[j] = '\0';
+        j = 0;
+        while((str_aux[j] = fgetc(fd)) != '|') {
+            j++;
+        }
+        str_aux[j] = '\0';
+        fread(&t.FAVORITE_COUNT, sizeof(int), 1, fd);
+        vector = (sort_index *) realloc(vector, (i+1) * sizeof(sort_index));
+        if(isInTheVector(vector, m+1, t.FAVORITE_COUNT) == 0) {
+            vector[m].FAVORITE_COUNT = t.FAVORITE_COUNT;
+            vector[m].rrn = i;
+            i++;
+            m++;
+        }
+        //printf("%d %d\n", vector[m].FAVORITE_COUNT, vector[m].rrn);
+        //fwrite(&t.FAVORITE_COUNT, sizeof(int), 1, idx);
+        //fwrite(&i, sizeof(int), 1, idx);
+        fread(&t.RETWEET_COUNT, sizeof(int), 1, fd);
+        fread(&t.VIEWS_COUNT, sizeof(int), 1, fd);
+    }
+
+    int vector_length = m;
+
+    printf("vector_length: %d\n", vector_length);
+
+    qsort(vector, i, sizeof(sort_index), compare);
+
+    for(k = 0; k < m; k++) {
+        fwrite(&vector[k].FAVORITE_COUNT, sizeof(int), 1, idx);
+        fwrite(&vector[k].rrn, sizeof(int), 1, idx);
+        //printf("%d %d\n", vector[k].FAVORITE_COUNT, vector[k].rrn);
+    }
+
+    testIndex(idx);
+    fclose(idx);
 }
 
 int addEnd(FILE *fp, TWEET *t, int totalSize, int *totalRegs) {

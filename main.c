@@ -44,6 +44,8 @@ int main (void) {
 
 	readAllTweets(fp);
 
+    createIndex(fp);
+
 	fclose(fp);
 
 	return 0;

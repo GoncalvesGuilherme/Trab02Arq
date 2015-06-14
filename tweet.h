@@ -19,7 +19,14 @@ typedef struct tweet_list {
 	struct tweet_list* nextNode;
 } TweetList;
 
+typedef struct sort_index {
+    int FAVORITE_COUNT;
+    int rrn;
+    int offset;
+} sort_index;
+
 void write(FILE *fd);
+int createIndex(FILE *fp);
 
 /**
  * @brief Insere registros no arquivo a partir
