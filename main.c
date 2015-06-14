@@ -10,7 +10,45 @@
 #include <string.h>
 #include "tweet.h"
 
+void noFile(FILE *fp) {
+	int sp = -1, pos;
+
+	fseek(fp, 0, SEEK_END);
+	pos = ftell(fp);
+	printf("pos %d\n", pos);
+	if (pos <= 0) {
+		rewind(fp);
+		fwrite(&sp, sizeof(int), 1, fp);
+	}
+}
+
 // Remove o \n do final da string
+void chomp(char str[]);
+
+char *allocatesStr(int strLen);
+
+int getTweet(FILE *fp, int *totalRegs);
+
+int main (void) {
+	int totalRegs = 0;
+	FILE *fp;
+
+	fp = fopen("data.bin", "ab+");
+	noFile(fp);
+	//fseek(fp, 0, SEEK_SET);
+	//fread(&sp1, sizeof(int), 1, fp);
+	//printf("sp1 %d\n", sp1);
+
+	getTweet(fp, &totalRegs);
+	//write(fp);
+
+	readAllTweets(fp);
+
+	fclose(fp);
+
+	return 0;
+}
+
 void chomp(char str[]) {
 	int pos = 0;
 
@@ -30,14 +68,16 @@ char *allocatesStr(int strLen) {
 	return s;
 }
 
-int getTweet(void) {
+int getTweet(FILE *fp, int *totalRegs) {
 	TWEET t;
 	int opt = 1;
 	char str[100], *s;
-	//int freeByteOffset;
+	int freeByteOffset;
 
 	//fgetc(stdin);
-//	while(opt != 0){
+	//fgets(str, 100, stdin);		// ignora a primeira chamada por pegar lixo, estranho nao deu problema no inicio, tirei essa e works
+
+	while(opt != 0){
 		// Le todas as variaveis do registro
 		//system("clear");
 		//freeByteOffset = searchFreeByteOffset();
@@ -47,7 +87,7 @@ int getTweet(void) {
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.TEXT = s;
-		puts(t.TEXT);
+		//puts(t.TEXT);
 
 		memset(str, 0, 100);
 		s = NULL;
@@ -56,28 +96,40 @@ int getTweet(void) {
 		chomp(str);
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
-		t.TEXT = s;
-		puts(t.USER);
+		t.USER = s;
+		//puts(t.USER);
 
 		memset(str, 0, 100);
 		s = NULL;
-
 		printf("Digite as coordenadas: ");
-		fgets(t.COORDINATES, COOR_SIZE, stdin);
-		chomp(t.COORDINATES);
-		fflush(stdin);
+		fgets(str, 100, stdin);
+		chomp(str);
+		s = allocatesStr(strlen(str));
+		strcpy(s, str);
+		t.COORDINATES = s;
+		//puts(t.COORDINATES);
+
 		printf("Digite o idioma: ");
-		fgets(t.LANGUAGE, LANG_SIZE, stdin);
-		chomp(t.LANGUAGE);
-		fflush(stdin);
+		fgets(str, 100, stdin);
+		chomp(str);
+		s = allocatesStr(strlen(str));
+		strcpy(s, str);
+		t.LANGUAGE = s;
+		//puts(t.LANGUAGE);
+
 		printf("Digite o numero de marcacoes como favorito: ");
 		scanf("%d", &t.FAVORITE_COUNT);
+		//printf("fc %d\n", t.FAVORITE_COUNT);
+
 		printf("Digite o numero de retweets: ");
 		scanf("%d", &t.RETWEET_COUNT);
+		//printf("rc %d\n", t.RETWEET_COUNT);
+
 		printf("Digite o numero de visualizacoes: ");
 		scanf("%ld", &t.VIEWS_COUNT);
+		//printf("vc %ld\n", t.VIEWS_COUNT);
 
-		if (addTweet(fp, t) != 0) {
+		if (addTweet(fp, &t, totalRegs) != 0) {
 			printf("Insercao nao realizada, tente de novo mais tarde:/\n");
 		}
 		else {
@@ -87,23 +139,6 @@ int getTweet(void) {
 		printf("Deseja adicionar mais pessoas? \nDigite qualquer numero para sim e 0 para retornar ao menu principal\n");
 		scanf("%d", &opt);
 		getchar();
-//	}
-	return 0;
-}
-
-int main (void) {
-
-    FILE *fd;
-
-    fd = fopen("data", "wb+");
-
-	getTweet();
-
-    write(fd);
-    readAllTweets(fd);
-    getTweetByUser(fd, "Arnaldo");
-    getTweetByUser(fd, "Jose");
-    getTweetByUser(fd, "Giovanna");
-
+	}
 	return 0;
 }
