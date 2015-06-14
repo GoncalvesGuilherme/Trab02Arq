@@ -1,3 +1,10 @@
+/**
+ * Arnaldo Stanzani                  8937510
+ * Guilherme Gonçalves               8937055
+ * Guilherme Silva dos Anjos         8936830
+ * Gustavo Henrique Oliveira Aguiar  8936912
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -212,4 +219,9 @@ void write(FILE *fd) {
     fwrite(&y, sizeof(int), 1, fd);
     fwrite(&z, sizeof(int), 1, fd);
     fwrite(&a, sizeof(long), 1, fd);
+}
+
+int addTweet(FILE *fp, TWEET *newTweet) {
+
+
 }
