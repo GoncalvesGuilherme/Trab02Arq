@@ -32,15 +32,16 @@ void printTweet(TWEET t) {
 
 int readAllTweets(FILE* fd) {
 
-    int length, i = 0, j;
+    int length, i = 0, j, k = 0;
     char str_aux[141];
     TWEET t;
 
     rewind(fd);
 
+    fseek(fd, sizeof(int), SEEK_CUR);
+
     while(1) {
         //fread(&j, sizeof(int), 1, fd);
-        fseek(fd, sizeof(int), SEEK_CUR);
         fread(&length, sizeof(int), 1, fd); // Ve o tamanho do proximo registro
         if(feof(fd))
             break;
@@ -49,6 +50,7 @@ int readAllTweets(FILE* fd) {
             i++;
         }
         str_aux[i] = '\0';
+        printf("%s\n", str_aux);
         if(str_aux[0] != '*') {
             t.USER = alloc_str(strlen(str_aux));
             strcpy(t.USER, str_aux);
@@ -86,7 +88,7 @@ int readAllTweets(FILE* fd) {
             printTweet(t);
         }
         else {
-            fseek(fd, length - (strlen(str_aux) + sizeof(int)) - 1, SEEK_CUR);
+            fseek(fd, length - (strlen(str_aux) + sizeof(int) + 1), SEEK_CUR);
         }
     }
     return 0;
@@ -100,20 +102,23 @@ int getTweetByUser(FILE* fd, char* user) {
 
     rewind(fd);
 
+    fseek(fd, sizeof(int), SEEK_CUR);
+
     while(1) {
         //fread(&j, sizeof(int), 1, fd);
-        fseek(fd, sizeof(int), SEEK_CUR);
         fread(&length, sizeof(int), 1, fd);
         if(feof(fd))
             break;
         i = 0;
         while((str_aux[i] = fgetc(fd)) != '|') {
+            //printf("%c\n", str_aux[i]);
             i++;
         }
-        //printf("ftell antes do if: %d\n", (int)ftell(fd));
+        printf("ftell antes do if: %d\n", (int)ftell(fd));
         //printf("%s\n", str_aux);
         //printf("%d %ld\n", (int)strlen(str_aux), ftell(fd));
         str_aux[i] = '\0';
+        printf("%s\n", str_aux);
         if(strcmp(str_aux, user) == 0) {
             t.USER = alloc_str(strlen(str_aux));
             strcpy(t.USER, str_aux);
@@ -152,7 +157,7 @@ int getTweetByUser(FILE* fd, char* user) {
             printTweet(t);
         }
         else {
-            fseek(fd, length - (strlen(str_aux) + sizeof(int)) - 1, SEEK_CUR);
+            fseek(fd, length - (strlen(str_aux) + sizeof(int)) + 4, SEEK_CUR);
         }
         //printf("ftell depois do if: %d\n", (int)ftell(fd));
     }
@@ -283,6 +288,7 @@ int addEnd(FILE *fp, TWEET *t, int totalSize, int *totalRegs) {
 	char language[strlen(t->LANGUAGE)];
 	int favorite, retweet;
 	long views;
+    int x = 1;
 
 	strcpy(text, t->TEXT);
 	strcpy(user, t->USER);
@@ -295,10 +301,11 @@ int addEnd(FILE *fp, TWEET *t, int totalSize, int *totalRegs) {
 	//rewind(fp);
 	fseek(fp, 0, SEEK_END);
 
+    //fwrite(&x, sizeof(int), 1, fp);
 	fwrite(&totalSize, sizeof(int), 1, fp);
-	fwrite(text, strlen(text), 1, fp);
-	fwrite(&delimiter, sizeof(char), 1, fp);
 	fwrite(user, strlen(user), 1, fp);
+	fwrite(&delimiter, sizeof(char), 1, fp);
+	fwrite(text, strlen(text), 1, fp);
 	fwrite(&delimiter, sizeof(char), 1, fp);
 	fwrite(coordinates, strlen(coordinates), 1, fp);
 	fwrite(&delimiter, sizeof(char), 1, fp);
@@ -337,13 +344,13 @@ int addTweet(FILE *fp, TWEET *newTweet, int *totalRegs) {
 	}
 }
 
-/*void write(FILE *fd) {
+void write(FILE *fd) {
     int x = 61;
     int j = 4;
-    char str[] = "Arnaldo#";
-    char str2[] = "Isso eh um teste#";
-    char str3[] = "3N24L#";
-    char str4[] = "Portugues#";
+    char str[] = "Arnaldo|";
+    char str2[] = "Isso eh um teste|";
+    char str3[] = "3N24L|";
+    char str4[] = "Portugues|";
     int y = 4;
     int z = 8;
     long a = 100;
@@ -360,10 +367,10 @@ int addTweet(FILE *fp, TWEET *newTweet, int *totalRegs) {
     fwrite(&z, sizeof(int), 1, fd);
     fwrite(&a, sizeof(long), 1, fd);
 
-    strcpy(str, "*ose#");
-    strcpy(str2, "Teste profundo#");
-    strcpy(str3, "24N24W#");
-    strcpy(str4, "Ingles#");
+    strcpy(str, "*ose|");
+    strcpy(str2, "Teste profundo|");
+    strcpy(str3, "24N24W|");
+    strcpy(str4, "Ingles|");
     x = 54;
     y = 14;
     z = 18;
@@ -379,10 +386,10 @@ int addTweet(FILE *fp, TWEET *newTweet, int *totalRegs) {
     fwrite(&z, sizeof(int), 1, fd);
     fwrite(&a, sizeof(long), 1, fd);
 
-    strcpy(str, "Giovanna#");
-    strcpy(str2, "Testeeeeeeee#");
-    strcpy(str3, "11N11W#");
-    strcpy(str4, "Frances#");
+    strcpy(str, "Giovanna|");
+    strcpy(str2, "Testeeeeeeee|");
+    strcpy(str3, "11N11W|");
+    strcpy(str4, "Frances|");
     x = 57;
     y = 65;
     z = 57;
@@ -397,4 +404,4 @@ int addTweet(FILE *fp, TWEET *newTweet, int *totalRegs) {
     fwrite(&y, sizeof(int), 1, fd);
     fwrite(&z, sizeof(int), 1, fd);
     fwrite(&a, sizeof(long), 1, fd);
-}*/
+}

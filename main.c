@@ -39,12 +39,13 @@ int main (void) {
 	//fread(&sp1, sizeof(int), 1, fp);
 	//printf("sp1 %d\n", sp1);
 
-	getTweet(fp, &totalRegs);
+	//getTweet(fp, &totalRegs);
 	//write(fp);
 
 	readAllTweets(fp);
+    //getTweetByUser(fp, "jao");
 
-    createIndex(fp);
+    //createIndex(fp);
 
 	fclose(fp);
 
