@@ -30,14 +30,14 @@ char *allocatesStr(int strLen);
 int getTweet(FILE *fp, int *totalRegs);
 
 int main (void) {
-	int opt = 1, fav;
+	int opt = 1, fav, totalRegs;
 	FILE *fp;
 	char str[20];
 	fp = fopen("data.bin", "ab+");
 	noFile(fp);
 	while(opt != 0)
 	{
-		printf("0 - Sair\n1 - Add\n2 - Imprimir tudo\n3 - Busca por user\n4 - Busca por favorite count\n5 - Busca por language\n6 - Busca por favorite count e language\n7 - Remover");
+		printf("0 - Sair\n1 - Add\n2 - Imprimir tudo\n3 - Busca por user\n4 - Busca por favorite count\n5 - Busca por language\n6 - Busca por favorite count e language\n7 - Remover\n");
 		scanf("%d", &opt);
 		switch(opt)
 		{
@@ -46,6 +46,7 @@ int main (void) {
 				return 0;
 				break;
 			case 1:
+				getTweet(fp, &totalRegs);
 				break;
 			case 2:
 				readAllTweets(fp);
@@ -135,6 +136,7 @@ int getTweet(FILE *fp, int *totalRegs) {
 	int opt = 1;
 	char str[100], *s;
 
+	fgetc(stdin);
 	while(opt != 0){
 		// Le todas as variaveis do registro
 		printf("Digite o texto: ");
