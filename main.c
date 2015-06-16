@@ -30,7 +30,7 @@ char *allocatesStr(int strLen);
 int getTweet(FILE *fp, int *totalRegs);
 
 int main (void) {
-	int totalRegs = 0, opt = 1, fav;
+	int opt = 1, fav;
 	FILE *fp;
 	char str[20];
 	fp = fopen("data.bin", "ab+");
@@ -46,7 +46,6 @@ int main (void) {
 				return 0;
 				break;
 			case 1:
-				getTweet(fp);
 				break;
 			case 2:
 				readAllTweets(fp);
@@ -59,7 +58,6 @@ int main (void) {
 			case 4:
 				printf("Qual favorite count deseja buscar?\n");
 				scanf("%d", &fav);
-				printList(fp, getTweetByFavorite(fp, fav));
 				break;
 			case 5:
 				printf("Falha na implementacao :(\n");
@@ -70,7 +68,6 @@ int main (void) {
 			case 7:
 				printf("Qual favorite count deseja remover?\n");
 				scanf("%d", &fav);
-				removeTweet(FILE *fd, fav);
 				break;
 		}
 	}
@@ -137,22 +134,15 @@ int getTweet(FILE *fp, int *totalRegs) {
 	TWEET t;
 	int opt = 1;
 	char str[100], *s;
-	int freeByteOffset;
-
-	//fgetc(stdin);
-	//fgets(str, 100, stdin);		// ignora a primeira chamada por pegar lixo, estranho nao deu problema no inicio, tirei essa e works
 
 	while(opt != 0){
 		// Le todas as variaveis do registro
-		//system("clear");
-		//freeByteOffset = searchFreeByteOffset();
 		printf("Digite o texto: ");
 		fgets(str, 100, stdin);
 		chomp(str);
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.TEXT = s;
-		//puts(t.TEXT);
 
 		memset(str, 0, 100);
 		s = NULL;
@@ -162,7 +152,6 @@ int getTweet(FILE *fp, int *totalRegs) {
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.USER = s;
-		//puts(t.USER);
 
 		memset(str, 0, 100);
 		s = NULL;
@@ -172,7 +161,6 @@ int getTweet(FILE *fp, int *totalRegs) {
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.COORDINATES = s;
-		//puts(t.COORDINATES);
 
 		printf("Digite o idioma: ");
 		fgets(str, 100, stdin);
@@ -180,24 +168,19 @@ int getTweet(FILE *fp, int *totalRegs) {
 		s = allocatesStr(strlen(str));
 		strcpy(s, str);
 		t.LANGUAGE = s;
-		//puts(t.LANGUAGE);
 
 		printf("Digite o numero de marcacoes como favorito: ");
 		scanf("%d", &t.FAVORITE_COUNT);
-		//printf("fc %d\n", t.FAVORITE_COUNT);
 
 		printf("Digite o numero de retweets: ");
 		scanf("%d", &t.RETWEET_COUNT);
-		//printf("rc %d\n", t.RETWEET_COUNT);
 
 		printf("Digite o numero de visualizacoes: ");
 		scanf("%ld", &t.VIEWS_COUNT);
-		//printf("vc %ld\n", t.VIEWS_COUNT);
 
 		if (addTweet(fp, &t, totalRegs) != 0) {
 			printf("Insercao nao realizada, tente de novo mais tarde:/\n");
-		}
-		else {
+		} else {
 			printf("Insercao realizada com sucesso!\n");
 		}
 

@@ -13,22 +13,28 @@ typedef struct tweet {
 } TWEET;
 
 typedef struct tweet_list {
+	TWEET* node;
 	unsigned int offset;
+
 	struct tweet_list* nextNode;
 } TweetList;
 
 typedef struct sort_indexfav {
     int FAVORITE_COUNT;
     int rrn;
+    struct sort_indexfav* next;
 } sort_indexfav;
 
 typedef struct sort_indexlang {
     char language[20];
     int rrn;
+    struct sort_indexlang* next;
 } sort_indexlang;
 
 void write(FILE *fd);
-int createIndex(FILE *fp);
+void createIndex(FILE *fp);
+char* alloc_str(int size);
+void printTweet(TWEET t);
 
 /**
  * @brief Insere registros no arquivo a partir
@@ -76,7 +82,7 @@ int readAllTweets(FILE* fd);
  * @return -1 Se falha na recuperação ou impressão
  *          1 Se recuperado e impresso com sucesso
  */
-int getTweetByUser(FILE* fd, char* user);
+void getTweetByUser(FILE* fd, char* user);
 
 /**
  * @brief Recupera todos os tweets referentes ao
